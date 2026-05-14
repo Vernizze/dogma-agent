@@ -2,11 +2,19 @@
 
 **DogmaAgent** é um agente cognitivo de governança e orquestração de regras desenvolvido em **C#** e integrado ao **Gemini 3.1 Pro**. O objetivo do sistema é gerenciar o ciclo de vida de "Dogmas" — diretrizes conceituais e pedagógicas — garantindo a integridade semântica da árvore de conhecimentos através de análise de impacto automatizada.
 
-Este projeto utiliza os princípios da **Espiritualidade Inaciana** e o lema **"Em Tudo Amar e Servir"** como seu principal caso de uso para gestão de conteúdos educativos e espirituais do protocolo **Marianinhos (CCMM)**.
-
 ## 🧠 O que é um "Dogma"?
 
 Neste ecossistema, um **Dogma** não é apenas um registro, mas uma unidade de diretriz que possui linhagem. Cada dogma pode ter dependentes (sucessores). Quando uma regra central é alterada, o Agente Dogma avalia o impacto em toda a cascata para evitar contradições teóricas ou práticas nos níveis de formação (**Sementinhas, Mensageiros e Atalaias**).
+
+
+---
+## 📄 Regras dos Dogmas
+
+### 1. Um Dogma nunca pode ser contrariado, mas pode ser revogado ou substituído
+
+### 2. Dogmas são hierárquicos. Se um dogma antecessor for revogado seus sucessores também o serão de forma arbitrária e irrevogável. Mas se um Dogma for substituído por outro, os sucessores do primeiro serão considerados como sucessores do segundo, a menos que sua natureza seja contrariada pela do novo antecessor, o que fará o sucessor ser revogado
+
+### 3. Há obrigatoriamente um, e somente um, Dogma inicial, que terá a nomenclatura especial de 'Genesis'. Todos os demais Dogmas lhe serão sucessores e ele representa o início do contexto controlado pelo agente
 
 ---
 
@@ -55,12 +63,6 @@ O agente foi construído sobre uma arquitetura de métodos especializados que de
     ```bash
     dotnet run
     ```
-
----
-
-## 📄 Contexto do Projeto
-
-Este agente faz parte do ferramental técnico para suporte aos instrutores dos **Marianinhos (CCMM)**, garantindo que as missões de **AMAR** (Interna/Oração) e **SERVIR** (Externa/Ação) estejam sempre alinhadas à mística inaciana.
 
 ---
 *Desenvolvido por Carlos - Engenharia de Software focada em **Em Tudo Amar e Servir**.*
