@@ -1,89 +1,65 @@
-﻿This README.md serves as the official specification for the Dogma Agent. It covers the conceptual foundation, the logical rules of the hierarchy, and the technical architecture for the implementation.
+﻿# 🤖 DogmaAgent
 
-Dogma: The AI Guardian of Concepts
-Dogma is an autonomous AI agent designed to act as a "Guardian of Integrity" for a specific knowledge context. Unlike a standard knowledge base, Dogma manages a hierarchical tree of principles where every concept is tied to an ancestor. It ensures that any evolution in requirements, business rules, or spiritual guidelines remains consistent with the core "Dogmas" of the system.
+**DogmaAgent** é um agente cognitivo de governança e orquestração de regras de negócio desenvolvido em **C#** e integrado ao **Gemini API**. O objetivo do sistema é gerenciar o ciclo de vida de diretrizes sistêmicas, garantindo a integridade da arquitetura de software através de análise de impacto automatizada, geração dinâmica de ontologias e mapeamento de domínio em tempo real.
 
-🎯 Vision
-To provide a single source of truth (SSoT) where changes are not just recorded, but analyzed for impact, ensuring that the "spirit" of the system is preserved through logical rigor and auditable decision-making.
-
-📜 The Three Golden Rules
-The Dogma Agent operates under three fundamental laws of logic:
-
-Immutability and Lifecycle: A Dogma can never be contradicted while active. It cannot be "edited"—it can only be Revoked (deleted) or Substituted (replaced by a new version).
-
-The Genesis Principle: There is exactly one starting point called Genesis. It represents the root of the entire context. If the Genesis is revoked, the entire context and all its successors are destroyed.
-
-Hierarchical Cascading:
-
-Revocation: If an ancestor is revoked, all its successors are revoked arbitrarily and irrevocably.
-
-Substitution: If an ancestor is substituted, successors are automatically evaluated. If their nature contradicts the new ancestor, they are revoked. If compatible, they are re-attached to the new version.
-
-🧠 Key Features
-1. Memory of Calculation (Rationale)
-Every decision made by the agent—whether to keep, move, or revoke a dogma—must be accompanied by a "Memory of Calculation." This is a detailed logical justification explaining the semantic analysis performed by the AI, ensuring the system is never a "black box."
-
-2. The "Curator" Alert System
-When interacting with users (e.g., Product Owners proposing new features), Dogma acts as an attentive curator. It doesn't block progress but issues clear impact warnings:
-
-🟢 Green (Evolutionary): No conflicts detected.
-
-🟡 Yellow (Divergent): Requires substitution of a leaf dogma; isolated impact.
-
-🔴 Red (Disruptive): High-impact change that triggers a cascade of revocations.
-
-3. Human-in-the-Loop (HITL)
-In cases of semantic ambiguity or high-risk changes (like Genesis substitution), Dogma pauses and requests human arbitration. It records these decisions as Evidence, building a "jurisprudence" of how principles should be interpreted.
-
-🛠 Technical Architecture
-Tech Stack
-Engine: Gemini AI (Inference & Semantic Analysis).
-
-Backend: C# (.NET) using HttpClient for API communication.
-
-Storage: File-based system using Markdown (.md) files.
-
-Metadata: YAML Frontmatter for tracking IDs, Parents, and Status.
-
-File Structure
-Plaintext
-/DogmaStorage
-  /Active        <-- Current living dogmas
-  /Revoked       <-- Historical record of deleted dogmas
-  /Replaced      <-- Old versions of substituted dogmas
-  /Evidence      <-- Decision logs and human intervention records
-Data Schema (YAML)
-Each .md file contains a header with its structural metadata:
-
-YAML
 ---
-id: DOGMA-001
-name: "Data Privacy"
-parentId: GENESIS
-status: Active
-nature: "Security and Compliance"
-createdAt: 2026-05-14
+
+## 1. O Conceito Geral do "Dogma"
+
+Neste ecossistema, um **Dogma** é uma unidade atômica de regra de negócio. Ele não é um simples registro de banco de dados, mas um "nó cognitivo" em uma árvore de dependências. 
+
+Os dogmas moldam a realidade da aplicação. Quando uma regra central (Dogma Pai) sofre uma disrupção ou é alterada, o sistema não permite que regras dependentes (Dogmas Filhos) permaneçam ativas se entrarem em contradição lógica com a nova realidade. O agente atua como o guardião da coerência estrutural do negócio.
+
 ---
-🚀 Use Case: Software Development Governance
-In a development environment, Dogma sits between the Product Owner (PO) and the Development Team.
 
-Requirement Proposal: The PO proposes a new User Story.
+## 2. As 3 Regras dos Dogmas
 
-Dogma Analysis: Dogma checks the story against the active tree.
+O ciclo de vida das regras de negócio neste sistema obedece a três leis imutáveis:
 
-Impact Report: Dogma warns if the story requires changing a fundamental principle (e.g., "This feature requires external data sharing, which contradicts Dogma ID-05: 'Internal Data Sovereignty'").
+1. **Linhagem Obrigatória (Hierarquia):** Com exceção da regra Gênesis (ROOT), todo dogma deriva de uma premissa lógica superior. Nada existe no vácuo; toda regra tem um "Por quê" fundamentado em um dogma pai.
+2. **Autoridade Ativa:** Um dogma ativo dita a arquitetura do domínio. Ele força a criação de entidades, vínculos e processos, sendo considerado a verdade absoluta do sistema até sua revogação.
+3. **Poda Recursiva (Efeito Cascata):** A revogação ou alteração de um dogma pai dispara imediatamente um processo de validação em toda a sua descendência. Dogmas sucessores que perdem o sentido lógico são identificados para expurgo.
 
-Alignment: The PO either adjusts the story or confirms the "Dogmatic Evolution," updating the context for all future stories.
+---
 
-📅 Roadmap
-[ ] Phase 1: C# Console POC with basic file CRUD and Gemini integration.
+## 3. Mecânica de Validação e Memória de Análise
 
-[ ] Phase 2: Implementation of recursive cascading revocation logic.
+A validação de conflitos é realizada pelo motor de IA generativa atuando como um Arquiteto de Software.
 
-[ ] Phase 3: Visual Tree mapping (graphing the dependencies).
+* **Análise de Impacto:** O sistema cruza o texto da nova regra com os dogmas sucessores da regra antiga, avaliando não apenas palavras-chave, mas a semântica da operação.
+* **Memória de Cálculo (Julgamento):** Para cada regra afetada, a IA compila um relatório lógico detalhando *por que* a regra sobrevive ou *por que* se torna obsoleta.
+* **Auditoria de Evidências:** Nenhuma exclusão é silenciosa. As decisões arquiteturais da IA são documentadas em arquivos de *log* físicos armazenados na pasta `/Evidence`, garantindo a rastreabilidade (Data, Regra Afetada, Justificativa, Novo Contexto).
 
-[ ] Phase 4: VS Code Extension for real-time "Dogma Compliance" checks while writing requirements.
+---
 
-Created by: Carlos
-Date: May 2026
-Status: Conceptual Design Complete / Implementation Starting
+## 4. Processo de Revogação e Substituição
+
+A evolução do negócio exige disrupção. O agente orquestra essa mudança através de um fluxo *Human-in-the-Loop* (Humano-no-Circuito):
+
+1. **Input da Disrupção:** Uma nova regra é submetida utilizando o ID da regra antiga que ela visa substituir.
+2. **Avaliação Cognitiva:** O `DogmaManager` rastreia todos os "filhos" e "netos" da regra original e pede ao LLM para validá-los contra a nova realidade.
+3. **Pausa para Chancela:** O agente interrompe a execução, exibe o Relatório de Impacto no console e solicita a aprovação explícita do *Product Owner* (PO) ou Engenheiro.
+4. **Execução da Poda:** Após a aprovação (`S`), as regras incompatíveis são movidas do diretório `/Active` e desativadas em cascata.
+
+---
+
+## 5. Mecânica de Geração do Entity Map (Mapeamento de Domínio)
+
+O DogmaAgent atua como um engenheiro de dados, traduzindo texto corrido em arquitetura de banco de dados através do `DomainMapManager`.
+
+* **Processamento Holístico:** O agente lê toda a árvore de dogmas sobreviventes em um único lote (*Batch Processing*), garantindo a resolução correta de entidades (ex: compreendendo que pronomes ocultos ou sinônimos referem-se à mesma tabela raiz).
+* **Extração DDD:** Focado em *Domain-Driven Design*, o agente identifica Atores, Artefatos, Entidades e seus Relacionamentos de Cardinalidade.
+* **Sincronização Visual:** O resultado é transpilado em tempo real para um diagrama de Entidade-Relacionamento utilizando a sintaxe **Mermaid.js**, que é atualizado dinamicamente na pasta `/Domain` sempre que o negócio sofre mutações.
+
+---
+
+## 6. Mecânica de Ontologia (Roteamento Autônomo)
+
+O sistema possui capacidade de auto-organização, construindo a árvore hierárquica organicamente através do `OntologyRouter`.
+
+* **Auto-Parenting:** Quando uma regra "órfã" (sem `ParentId` definido) é inserida no sistema, ela não precisa ser roteada manualmente pelo desenvolvedor.
+* **Roteamento Cognitivo:** A IA lê a nova regra, lê toda a árvore de regras ativas e atua como um classificador semântico. Ela deduz matematicamente qual dogma ativo serve como "guarda-chuva" lógico ou premissa fundacional para a nova regra.
+* **Estruturação Dinâmica:** O `ParentId` é atribuído autonomamente, e o dogma é enxertado no galho correto da árvore de arquitetura antes de ser salvo e submetido ao mapeamento de domínio.
+
+---
+*Desenvolvido para orquestração escalável de regras de negócio, governança de IA e modelagem autônoma de sistemas.*

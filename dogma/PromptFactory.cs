@@ -104,4 +104,52 @@ public static class PromptFactory
                     ";
         return prompt;
     }
+
+    public static string BuildParentRoutingPrompt(string newRuleContent, List<DogmaNode> top3Candidates)
+    {
+        var prompt = $@"
+                    Sua tarefa é definir qual é a regra PAI (fundamento lógico) de uma NOVA REGRA, baseando-se apenas nos 3 candidatos abaixo.
+
+                    NOVA REGRA A SER INSERIDA:
+                    ""{newRuleContent}""
+
+                    CANDIDATOS (TOP 3 SIMILARIDADE SEMÂNTICA):
+                    ";
+                            foreach (var cand in top3Candidates)
+                            {
+                                prompt += $"- ID: {cand.Id} | Conteúdo: {cand.Content}\n";
+                            }
+
+                            prompt += @"
+                    INSTRUÇÕES:
+                    1. Escolha QUAL dos candidatos acima serve como guarda-chuva lógico ou premissa para a nova regra.
+                    2. Retorne APENAS um JSON no formato: { ""ParentId"": ""ID_ESCOLHIDO"" }
+                    3. Se NENHUM fizer sentido absoluto, retorne { ""ParentId"": ""ROOT"" }
+                    ";
+        return prompt;
+    }
+
+    public static string BuildGlobalRoutingPrompt(string newRuleContent, List<DogmaNode> activeDogmas)
+    {
+        var prompt = $@"
+                        Sua tarefa é atuar como um Roteador Ontológico. Você deve definir qual é a regra PAI (fundamento lógico) de uma NOVA REGRA, analisando a árvore atual de regras do negócio.
+
+                        NOVA REGRA A SER INSERIDA:
+                        ""{newRuleContent}""
+
+                        ÁRVORE DE REGRAS ATIVAS (CANDIDATOS):
+                        ";
+                                foreach (var dogma in activeDogmas)
+                                {
+                                    prompt += $"- ID: {dogma.Id} | Conteúdo: {dogma.Content}\n";
+                                }
+
+                                prompt += @"
+                        INSTRUÇÕES:
+                        1. Encontre qual regra ativa atua como categoria superior, premissa ou guarda-chuva lógico para a Nova Regra.
+                        2. Retorne APENAS um JSON no formato estrito: { ""ParentId"": ""ID_ESCOLHIDO"" }
+                        3. Se NENHUMA regra ativa for uma premissa lógica para a nova regra, retorne { ""ParentId"": ""ROOT"" }
+                        ";
+        return prompt;
+    }
 }

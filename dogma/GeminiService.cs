@@ -57,4 +57,41 @@ public class GeminiService(string apiKey)
         // 3. Se não for nem erro nem sucesso conhecido, imprime o que veio
         throw new Exception($"Estrutura de JSON inesperada:\n{result}");
     }
+
+    public async Task<float[]> GetEmbeddingAsync(string text)
+    {
+        // Fallback de segurança: usando o text-embedding-004, que é garantido em todas as contas e regiões
+        // AGORA SIM, o fallback correto!
+        var modelName = "embedding-001";
+        var url = $"https://generativelanguage.googleapis.com/v1beta/models/{modelName}:embedContent?key={_apiKey}";
+
+        var requestBody = new
+        {
+            model = $"models/{modelName}",
+            content = new { parts = new[] { new { text = text } } }
+        };
+
+        var content = new StringContent(JsonSerializer.Serialize(requestBody), Encoding.UTF8, "application/json");
+        var response = await _httpClient.PostAsync(url, content);
+
+        // Mostra o erro real no console se falhar, em vez de quebrar silenciosamente
+        if (!response.IsSuccessStatusCode)
+        {
+            var errorJson = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Erro na API de Embeddings: {errorJson}");
+        }
+
+        var jsonString = await response.Content.ReadAsStringAsync();
+        var jsonDoc = JsonDocument.Parse(jsonString);
+
+        // Navega no JSON da Google para extrair o array de floats
+        var values = jsonDoc.RootElement
+            .GetProperty("embedding")
+            .GetProperty("values")
+            .EnumerateArray()
+            .Select(x => x.GetSingle())
+            .ToArray();
+
+        return values;
+    }
 }
