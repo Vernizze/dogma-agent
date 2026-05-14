@@ -2,113 +2,81 @@
 
 class Program
 {
-    // Note que agora o Main é async Task para podermos usar o await na IA
     static async Task Main(string[] args)
     {
-        Console.WriteLine("--- DOGMA AGENT: FASE 3 (SUBSTITUIÇÃO INTELIGENTE) ---");
+        var repository = new DogmaRepository();
 
-        var repo = new DogmaRepository();
-        var gemini = new GeminiService("API_KEY"); // Não esqueça a chave!
+        // Insira sua NOVA CHAVE aqui. 
+        var gemini = new GeminiService("api-key");
 
-        var manager = new DogmaManager(repo, gemini);
+        var dogmaManager = new DogmaManager(repository, gemini);
+        var domainManager = new DomainMapManager(gemini);
 
-        // 1. Setup: Criando o cenário base
-        SetupPhase3TestData(repo);
+        Console.WriteLine("🧹 Limpando o ecossistema (Resetando pastas)...");
+        if (Directory.Exists("DogmaStorage/Active")) Directory.Delete("DogmaStorage/Active", true);
+        if (Directory.Exists("DogmaStorage/Domain")) Directory.Delete("DogmaStorage/Domain", true);
+        Directory.CreateDirectory("DogmaStorage/Active");
+        Directory.CreateDirectory("DogmaStorage/Domain");
 
-        Console.WriteLine("\n[Estado Atual da Árvore (Pasta /Active)]");
-        ListActiveFiles();
+        var dogmasIniciais = GetHollywoodLocadoraData();
 
-        Console.WriteLine("\n[Ação do PO] Propondo a Substituição do DOGMA-100...");
-        Console.WriteLine("Pressione qualquer tecla para enviar a proposta ao motor da IA...");
-        Console.ReadKey();
+        Console.WriteLine("\n==================================================");
+        Console.WriteLine("🌱 FASE 1: A GÊNESE DA LOCADORA (EVOLUÇÃO PASSO A PASSO)");
+        Console.WriteLine("==================================================");
 
-        // 2. A Nova Proposta de Dogma que vai substituir o antigo DOGMA-100
-        var novaProposta = new DogmaNode
+        foreach (var dogma in dogmasIniciais)
         {
-            Id = "DOGMA-100", // Mantém o ID para indicar substituição
-            Name = "Regra da Dupla Missão",
-            ParentId = "GENESIS",
-            Nature = "Metodologia de Envio",
-            Content = "Toda missão de envio ao final do encontro deve ser obrigatoriamente dupla: AMAR (internidade e oração) e SERVIR (ação externa e concreta)."
+            Console.WriteLine($"\n>>> Inserindo Regra Gênesis: [{dogma.Id}]...");
+
+            // 1. Aqui é NASCIMENTO, não substituição. Salvamos direto.
+            repository.Save(dogma);
+
+            // 2. Extração e Atualização Imediata do MER de Negócios
+            var dogmasAtivos = repository.LoadAllActive();
+            await domainManager.ExtractGlobalDomainMapAsync(dogmasAtivos);
+
+            // 3. Pausa estratégica de 3s para respeitar o Rate Limit (429) da API do Google
+            await Task.Delay(3000);
+        }
+
+        Console.WriteLine("\n==================================================");
+        Console.WriteLine("🎬 FASE 2: TESTE DE DISRUPÇÃO (A CHEGADA DO DVD)");
+        Console.WriteLine("==================================================");
+
+        var novaRegraDvd = new DogmaNode
+        {
+            Id = "HL-003",
+            ParentId = "HL-001",
+            Content = "A atividade principal dela é locação exclusiva de filmes em formato DVD. O formato VHS foi totalmente descontinuado."
         };
 
-        // 3. Execução da Fase 3
-        await manager.SubstituteDogmaAsync(novaProposta);
+        // AQUI SIM usamos o Substitute, pois estamos trocando a HL-003 do VHS pela HL-003 do DVD
+        await dogmaManager.SubstituteDogmaAsync(novaRegraDvd);
 
-        // 4. Verificando o Resultado
-        Console.WriteLine("\n[Estado Final da Árvore (Pasta /Active)]");
-        ListActiveFiles();
+        Console.WriteLine("\n🗺️ Atualizando o MER de Negócios pós-Disrupção (Sincronização Ontológica)...");
 
-        Console.WriteLine("\n[Arquivos Movidos para a Lixeira (Pasta /Revoked)]");
-        ListRevokedFiles();
+        var dogmasSobreviventes = repository.LoadAllActive();
+        await domainManager.ExtractGlobalDomainMapAsync(dogmasSobreviventes);
 
-        Console.WriteLine("\nFim do teste. Verifique o output do console para ler a Memória de Cálculo da IA!");
+        Console.WriteLine("\n🎉 Sincronização Concluída! Todo o ciclo de vida foi mapeado e validado.");
     }
 
-    static void SetupPhase3TestData(DogmaRepository repo)
+    // Transformamos o Setup em um "Fornecedor de Dados" limpo, sem responsabilidade de I/O
+    public static List<DogmaNode> GetHollywoodLocadoraData()
     {
-        ClearDirectory("DogmaStorage/Active");
-        ClearDirectory("DogmaStorage/Revoked");
-        ClearDirectory("DogmaStorage/Evidence");
-
-        // Gênesis
-        repo.Save(new DogmaNode
+        return new List<DogmaNode>
         {
-            Id = "GENESIS",
-            Name = "Espiritualidade Inaciana",
-            ParentId = null,
-            Nature = "Mística",
-            Content = "O lema central é 'Em Tudo Amar e Servir'."
-        });
-
-        // O Dogma Antigo (Que será substituído)
-        repo.Save(new DogmaNode
-        {
-            Id = "DOGMA-100",
-            Name = "Envio Exclusivamente Externo",
-            ParentId = "GENESIS",
-            Nature = "Metodologia de Envio",
-            Content = "A etapa de Envio é livre e focada APENAS em ações comunitárias externas."
-        });
-
-        // Filho 1 (Deve SOBREVIVER, pois é uma ação externa de SERVIR)
-        repo.Save(new DogmaNode
-        {
-            Id = "DOGMA-101",
-            Name = "Ação Solidária",
-            ParentId = "DOGMA-100",
-            Nature = "Prática",
-            Content = "As crianças devem recolher alimentos para doação como parte do Envio."
-        });
-
-        // Filho 2 (Deve MORRER, pois contraria a nova exigência de oração interna/AMAR)
-        repo.Save(new DogmaNode
-        {
-            Id = "DOGMA-102",
-            Name = "Proibição Contemplativa",
-            ParentId = "DOGMA-100",
-            Nature = "Restrição de Tempo",
-            Content = "É proibido usar o tempo do Envio para orações ou momentos contemplativos."
-        });
-    }
-
-    // ... (Mantenha os métodos ListActiveFiles, ListRevokedFiles e ClearDirectory exatamente iguais ao código anterior) ...
-    static void ListActiveFiles()
-    {
-        var files = Directory.GetFiles("DogmaStorage/Active", "*.md");
-        foreach (var f in files) Console.WriteLine($" - {Path.GetFileName(f)}");
-    }
-
-    static void ListRevokedFiles()
-    {
-        var files = Directory.GetFiles("DogmaStorage/Revoked", "*.md");
-        foreach (var f in files) Console.WriteLine($" - {Path.GetFileName(f)}");
-    }
-
-    static void ClearDirectory(string path)
-    {
-        if (!Directory.Exists(path)) Directory.CreateDirectory(path);
-        var dir = new DirectoryInfo(path);
-        foreach (var file in dir.GetFiles()) file.Delete();
+            new DogmaNode { Id = "HL-001", Content = "A empresa Hollywood Locadora foi fundada em 13/05/1992." },
+            new DogmaNode { Id = "HL-002", ParentId = "HL-001", Content = "O CNPJ da Hollywood é 12.345.678-0001-01." },
+            new DogmaNode { Id = "HL-003", ParentId = "HL-001", Content = "A atividade principal dela é locação de filmes VHS." },
+            new DogmaNode { Id = "HL-004", ParentId = "HL-003", Content = "Ela também vende refrigerantes e snacks para os clientes como conveniência." },
+            new DogmaNode { Id = "HL-005", ParentId = "HL-003", Content = "Cada filme tem o custo de R$0,10 por dia se for do tipo Catálogo." },
+            new DogmaNode { Id = "HL-006", ParentId = "HL-003", Content = "Cada filme tem o custo de R$0,20 por dia se for do tipo Lançamento." },
+            new DogmaNode { Id = "HL-009", ParentId = "HL-003", Content = "Se um filme for devolvido sem rebobinar será cobrada uma multa de R$0,03." },
+            new DogmaNode { Id = "HL-010", ParentId = "HL-003", Content = "Se um filme for danificado pelo cliente ele deverá pagar um valor de 10 locações em seu valor sem descontos." },
+            new DogmaNode { Id = "HL-007", ParentId = "HL-005", Content = "Cada filme tem o custo de R$0,05 por dia se for do tipo Catálogo e for locado conjuntamente a, ao menos, outros 3 filmes também do tipo Catálogo." },
+            new DogmaNode { Id = "HL-008", ParentId = "HL-006", Content = "Cada filme tem o custo de R$0,15 por dia se for do tipo Lançamento e for locado conjuntamente a, ao menos, outros 5 filmes também do tipo Lançamento." },
+            new DogmaNode { Id = "HL-011", ParentId = "HL-009", Content = "Se mais de um filme vier sem rebinar, cobrar o valor de R$0,05 por filme." }
+        };
     }
 }

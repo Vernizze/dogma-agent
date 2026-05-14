@@ -58,4 +58,50 @@ public static class PromptFactory
                     }}
                 ]";
     }
+
+    public static string BuildEntityExtractionPrompt(string dogmaContent)
+    {
+        return $@"
+                Você é um Arquiteto de Software sênior especialista em Domain-Driven Design (DDD).
+                Sua tarefa é analisar o seguinte texto de Regra de Negócio e extrair o modelo de domínio (Business ERD) subjacente.
+
+                TEXTO DA REGRA:
+                ""{dogmaContent}""
+
+                INSTRUÇÕES DE EXTRAÇÃO:
+                1. Identifique os Atores (quem executa a ação), Entidades (objetos com ciclo de vida) e Artefatos (o que é gerado ou consumido).
+                2. Identifique os verbos de transação que definem a cardinalidade e o Relacionamento de Negócio entre esses elementos.
+                3. Gere um diagrama Entity-Relationship (ER) usando estritamente a sintaxe do Mermaid.js.
+                4. Mantenha os nomes das entidades em PascalCase e no idioma original do texto.
+                5. Retorne APENAS o código Mermaid puro, sem nenhuma marcação markdown (como ```mermaid), sem a palavra 'erDiagram' no início e sem nenhuma explicação adicional.
+
+                EXEMPLO DE ESTRUTURA ESPERADA:
+                    ATOR ||--o{{ ARTEFATO : processa
+                    ENTIDADE_PRINCIPAL ||--|| ENTIDADE_SECUNDARIA : contem
+                ";
+    }
+
+    public static string BuildGlobalDomainMapPrompt(List<DogmaNode> dogmas)
+    {
+        var prompt = @"
+                    Você é um Arquiteto de Software sênior especialista em Domain-Driven Design (DDD).
+                    Sua tarefa é ler um CONJUNTO de Regras de Negócio de uma empresa, realizar a resolução de entidades (consolidando pronomes e sinônimos como 'Empresa', 'Ela', 'Hollywood' e 'Locadora' em uma única entidade raiz) e gerar um modelo de domínio (Business ERD) ÚNICO, coeso e unificado.
+
+                    REGRAS DE NEGÓCIO ATIVAS (CONTEXTO GLOBAL):
+                    ";
+                            foreach (var dogma in dogmas)
+                            {
+                                prompt += $"- [{dogma.Id}] {dogma.Content}\n";
+                            }
+
+                            prompt += @"
+                    INSTRUÇÕES DE EXTRAÇÃO:
+                    1. Analise o contexto global para unificar as entidades. Não crie entidades redundantes.
+                    2. Identifique Atores, Entidades Principais e Artefatos.
+                    3. Gere um diagrama Entity-Relationship (ER) consolidado usando estritamente a sintaxe do Mermaid.js.
+                    4. Mantenha os nomes em PascalCase (ex: Cliente, Filme, Locacao).
+                    5. Retorne APENAS o código Mermaid puro, sem marcações markdown, sem a palavra 'erDiagram' e sem texto adicional.
+                    ";
+        return prompt;
+    }
 }
